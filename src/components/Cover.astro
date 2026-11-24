@@ -16,10 +16,6 @@ const { art, label, uid, title } = Astro.props;
       <stop offset=".45" stop-color="#2bd4a4" stop-opacity=".7"></stop>
       <stop offset="1" stop-color="#0b0b0d" stop-opacity="0"></stop>
     </radialGradient>
-    <linearGradient id={`${uid}-b`} x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff3d9a"></stop>
-      <stop offset="1" stop-color="#6b2cff"></stop>
-    </linearGradient>
   </defs>
   <rect width="600" height="600" fill="#0e0e12"></rect>
   {
@@ -29,7 +25,7 @@ const { art, label, uid, title } = Astro.props;
         {[0, 30, 60, 90, 120, 150].map((deg) => (
           <ellipse cx="300" cy="320" rx="70" ry="210" fill="none" stroke="#0e0e12" stroke-width="10" opacity=".55" transform={`rotate(${deg} 300 320)`} />
         ))}
-        <circle cx="300" cy="320" r="38" fill={`url(#${uid}-b)`} />
+        <circle cx="300" cy="320" r="38" fill="#ff3d9a" />
         {Array.from({ length: 22 }, (_, i) => (
           <rect x="40" y={40 + i * 6} width={520 - (i % 5) * 60} height="2" fill="#f2f2ee" opacity=".08" />
         ))}
@@ -39,7 +35,7 @@ const { art, label, uid, title } = Astro.props;
   {
     art === "wire" && (
       <g>
-        <rect width="600" height="600" fill={`url(#${uid}-b)`} opacity=".9" />
+        <rect width="600" height="600" fill="#d8327f" />
         {Array.from({ length: 18 }, (_, i) => (
           <path
             d={`M-20 ${120 + i * 22} C 160 ${40 + i * 30}, 380 ${260 + i * 8}, 620 ${90 + i * 26}`}
@@ -69,7 +65,7 @@ const { art, label, uid, title } = Astro.props;
   }
   {
     title && (
-      <text x="40" y="560" fill="#f2f2ee" font-family="Unbounded Variable, sans-serif" font-size="34" font-weight="800" letter-spacing="2">
+      <text x="40" y="560" fill="#f2f2ee" font-family="Unbounded Variable, sans-serif" font-size="34" font-weight="600" letter-spacing="2">
         {title.toUpperCase()}
       </text>
     )

@@ -14,6 +14,7 @@
   --font-body: "Space Grotesk Variable", system-ui, sans-serif;
 
   --radius: 6px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --wrap: 1200px;
   --gutter: clamp(16px, 4vw, 40px);
   color-scheme: dark;
@@ -50,7 +51,7 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.02em;
   margin: 0 0 0.5em;
@@ -66,8 +67,12 @@ h2 {
 }
 
 h3 {
+  font-family: var(--font-body);
   font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.25;
   letter-spacing: 0;
+  text-transform: none;
 }
 
 p {
@@ -98,12 +103,10 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: 500;
   color: var(--lime);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .kicker::before {
@@ -142,20 +145,18 @@ a {
   border: 2px solid transparent;
   border-radius: var(--radius);
   font: inherit;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
   transition:
-    transform 0.15s ease,
-    background-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.15s ease;
+    transform 0.14s var(--ease),
+    background-color 0.14s var(--ease),
+    border-color 0.14s var(--ease),
+    color 0.14s var(--ease);
 }
 
-.btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 var(--magenta);
+.btn:active {
+  transform: scale(0.98);
 }
 
 .btn-primary {
@@ -163,10 +164,19 @@ a {
   color: #0b0b0d;
 }
 
+.btn-primary:hover {
+  background: #d4ff6e;
+}
+
 .btn-ghost {
-  border-color: var(--text);
+  border-color: rgb(242 242 238 / 0.35);
   color: var(--text);
   background: transparent;
+}
+
+.btn-ghost:hover {
+  border-color: var(--text);
+  background: rgb(242 242 238 / 0.06);
 }
 
 .btn-small {

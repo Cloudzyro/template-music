@@ -11,7 +11,7 @@ const parts = (s: Show) => {
   const d = new Date(`${s.date}T12:00:00Z`);
   return {
     month: d.toLocaleString("en-US", { month: "short", timeZone: "UTC" }),
-    day: d.toLocaleString("en-US", { day: "2-digit", timeZone: "UTC" }),
+    day: d.toLocaleString("en-US", { day: "numeric", timeZone: "UTC" }),
     year: d.toLocaleString("en-US", { year: "numeric", timeZone: "UTC" }),
     weekday: d.toLocaleString("en-US", { weekday: "short", timeZone: "UTC" }),
     full: d.toLocaleString("en-US", { dateStyle: "long", timeZone: "UTC" }),
@@ -110,26 +110,22 @@ const parts = (s: Show) => {
     gap: 1rem 1.5rem;
     padding: 1.1rem 0;
     border-bottom: 1px solid var(--line);
-    transition: background-color 0.15s ease;
-  }
-  .show:hover {
-    background: linear-gradient(90deg, rgb(198 255 61 / 0.06), transparent);
   }
   .date {
     display: grid;
     line-height: 1;
-    font-family: var(--font-display);
-    text-transform: uppercase;
+    gap: 4px;
   }
   .m {
-    font-size: 0.8rem;
-    color: var(--magenta);
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-weight: 500;
   }
   .d {
+    font-family: var(--font-display);
     font-size: 2.2rem;
-    font-weight: 800;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
   }
   .where {
     display: grid;
@@ -137,10 +133,9 @@ const parts = (s: Show) => {
     min-width: 0;
   }
   .city {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(1rem, 2.4vw, 1.35rem);
-    text-transform: uppercase;
+    font-weight: 600;
+    font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+    line-height: 1.25;
   }
   .venue {
     color: var(--muted);
@@ -153,17 +148,9 @@ const parts = (s: Show) => {
   .sold,
   .soon {
     display: inline-block;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    padding: 0.55rem 0.9rem;
-    border: 2px dashed var(--magenta);
-    color: var(--magenta);
-    border-radius: var(--radius);
-  }
-  .soon {
-    border-color: var(--line);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0;
     color: var(--muted);
   }
   .empty {
@@ -175,10 +162,8 @@ const parts = (s: Show) => {
   }
   summary {
     cursor: pointer;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-size: 0.9rem;
+    font-weight: 500;
+    font-size: 1rem;
     color: var(--muted);
     padding: 0.5rem 0;
     width: fit-content;

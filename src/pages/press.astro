@@ -99,9 +99,12 @@ import { site, press, latestRelease } from "../data/site";
     margin-top: clamp(40px, 6vw, 72px);
   }
   h2 {
-    font-size: 1.1rem;
-    letter-spacing: 0.08em;
-    color: var(--lime);
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text);
     margin-top: 2.5rem;
   }
   .bio h2:first-child,
@@ -116,8 +119,9 @@ import { site, press, latestRelease } from "../data/site";
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
     gap: 0.75rem;
+    max-width: 560px;
   }
   .members li {
     display: grid;
@@ -132,7 +136,7 @@ import { site, press, latestRelease } from "../data/site";
   blockquote {
     margin: 0 0 1.5rem;
     padding-left: 1.25rem;
-    border-left: 4px solid var(--magenta);
+    border-left: 2px solid var(--line);
   }
   blockquote p {
     font-family: var(--font-display);
@@ -161,9 +165,7 @@ import { site, press, latestRelease } from "../data/site";
     gap: 0.75rem;
   }
   dt {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+    font-size: 0.9rem;
     color: var(--muted);
   }
   dd {
