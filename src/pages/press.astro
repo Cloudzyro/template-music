@@ -1,0 +1,208 @@
+---
+import Base from "../layouts/Base.astro";
+import Cover from "../components/Cover.astro";
+import { site, press, latestRelease } from "../data/site";
+---
+
+<Base title="Press kit" description={`Press kit for ${site.name}: bio, members, quotes, logos and cover art.`}>
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">Electronic press kit</span>
+      <h1>Press kit</h1>
+      <p class="lede">{press.shortBio}</p>
+
+      <div class="grid">
+        <div class="bio">
+          <h2>Bio</h2>
+          {press.longBio.map((p) => <p>{p}</p>)}
+
+          <h2>Members</h2>
+          <ul class="members">
+            {
+              press.members.map((m) => (
+                <li>
+                  <strong>{m.name}</strong>
+                  <span>{m.role}</span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <h2>What people say</h2>
+          {
+            press.quotes.map((q) => (
+              <blockquote>
+                <p>"{q.text}"</p>
+                <cite>{q.source}</cite>
+              </blockquote>
+            ))
+          }
+        </div>
+
+        <aside class="side">
+          <div class="card">
+            <Cover art="bloom" uid="press" label={`Cover art for ${latestRelease.title}`} title={latestRelease.title} />
+          </div>
+          <div class="card">
+            <h2>Fast facts</h2>
+            <dl>
+              {
+                press.facts.map((f) => (
+                  <div>
+                    <dt>{f.label}</dt>
+                    <dd>{f.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+          <div class="card">
+            <h2>Downloads</h2>
+            <ul class="downloads">
+              {
+                press.assets.map((a) => (
+                  <li>
+                    <a href={a.file} download>
+                      <span>{a.label}</span>
+                      <small>{a.size}</small>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Contact</h2>
+            <p>
+              Press: <a href={`mailto:${site.pressEmail}`}>{site.pressEmail}</a><br />
+              Booking: <a href={`mailto:${site.bookingEmail}`}>{site.bookingEmail}</a>
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  h1 {
+    font-size: clamp(2.6rem, 8vw, 6rem);
+  }
+  .lede {
+    font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+    max-width: 52ch;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: clamp(32px, 6vw, 80px);
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+  h2 {
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--lime);
+    margin-top: 2.5rem;
+  }
+  .bio h2:first-child,
+  .card h2 {
+    margin-top: 0;
+  }
+  .bio p {
+    max-width: 64ch;
+  }
+  .members {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+  .members li {
+    display: grid;
+    padding: 0.9rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .members span {
+    color: var(--muted);
+  }
+  blockquote {
+    margin: 0 0 1.5rem;
+    padding-left: 1.25rem;
+    border-left: 4px solid var(--magenta);
+  }
+  blockquote p {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    line-height: 1.35;
+    margin-bottom: 0.4rem;
+  }
+  cite {
+    font-style: normal;
+    color: var(--muted);
+  }
+  .side {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  dt {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+  .downloads {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .downloads a {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .downloads a:hover {
+    border-color: var(--lime);
+    color: var(--lime);
+  }
+  .downloads small {
+    white-space: nowrap;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .card p {
+    margin: 0;
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

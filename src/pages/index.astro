@@ -1,0 +1,428 @@
+---
+import Base from "../layouts/Base.astro";
+import Cover from "../components/Cover.astro";
+import Player from "../components/Player.astro";
+import TourList from "../components/TourList.astro";
+import SignupForm from "../components/SignupForm.astro";
+import { site, latestRelease, embeds, merch, press, signup, shows } from "../data/site";
+
+const today = new Date().toISOString().slice(0, 10);
+const cities = [...new Set(shows.filter((s) => s.date >= today).map((s) => s.city.split(",")[0]))];
+const ticker = cities.length ? cities : [latestRelease.title, "Out now"];
+---
+
+<Base>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="kicker">{latestRelease.kicker}</span>
+        <h1>
+          <span class="band">{site.name}</span>
+          <span class="release">{latestRelease.title}</span>
+        </h1>
+        <p class="hero-text">{latestRelease.text}</p>
+        <p class="released">{latestRelease.type}. Released {latestRelease.released}.</p>
+        <div class="actions">
+          {
+            latestRelease.links.map((l, i) => (
+              <a class={`btn ${i === 0 ? "btn-primary" : "btn-ghost"}`} href={l.url}>
+                {l.label}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+      <div class="hero-cover">
+        <div class="vinyl" aria-hidden="true"></div>
+        <div class="sleeve">
+          <Cover art="bloom" uid="hero" label={`Cover art for ${latestRelease.title}`} title={latestRelease.title} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      {
+        [0, 1].map(() => (
+          <span class="ticker-group">
+            {ticker.map((c) => (
+              <span>
+                {c}
+                <i>*</i>
+              </span>
+            ))}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
+  <section class="section" id="music" aria-labelledby="music-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Listen</span>
+          <h2 id="music-title">Music</h2>
+        </div>
+        <p>Players load only when you press play, so nothing from these services runs until you choose it.</p>
+      </div>
+      <div class="players">
+        {embeds.map((e, i) => <Player embed={e} uid={`p${i}`} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section tour-section" id="tour" aria-labelledby="tour-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="kicker">On the road</span>
+          <h2 id="tour-title">Tour dates</h2>
+        </div>
+        <p>All shows are all ages unless noted. Tickets go fast, so join the list for presale codes.</p>
+      </div>
+      <TourList />
+    </div>
+  </section>
+
+  <section class="section" id="merch" aria-labelledby="merch-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Support the band</span>
+          <h2 id="merch-title">Merch</h2>
+        </div>
+        <p>Every order is packed by us, between tours, at the kitchen table.</p>
+      </div>
+      <ul class="merch">
+        {
+          merch.map((m) => (
+            <li>
+              <a href={m.url} class="merch-card">
+                <div class={`merch-art art-${m.art}`} role="img" aria-label={`Illustration of ${m.name}`}>
+                  {m.art === "vinyl" && (
+                    <svg viewBox="0 0 200 200" aria-hidden="true">
+                      <circle cx="100" cy="100" r="86" fill="#0e0e12" />
+                      <circle cx="100" cy="100" r="70" fill="none" stroke="#2a2a33" stroke-width="2" />
+                      <circle cx="100" cy="100" r="54" fill="none" stroke="#2a2a33" stroke-width="2" />
+                      <circle cx="100" cy="100" r="28" fill="#c6ff3d" />
+                      <circle cx="100" cy="100" r="4" fill="#0e0e12" />
+                    </svg>
+                  )}
+                  {m.art === "tee" && (
+                    <svg viewBox="0 0 200 200" aria-hidden="true">
+                      <path d="M70 40l-40 22 14 30 18-8v80h76V84l18 8 14-30-40-22c-6 12-18 18-30 18s-24-6-30-18z" fill="#0e0e12" />
+                      <circle cx="100" cy="110" r="18" fill="#ff3d9a" />
+                      <path d="M76 140c8-14 14-14 24 0s16 14 24 0" fill="none" stroke="#c6ff3d" stroke-width="5" stroke-linecap="round" />
+                    </svg>
+                  )}
+                  {m.art === "hoodie" && (
+                    <svg viewBox="0 0 200 200" aria-hidden="true">
+                      <path d="M100 30c-22 0-34 14-36 30l-36 20 10 90h124l10-90-36-20c-2-16-14-30-36-30z" fill="#2a2a33" />
+                      <path d="M76 62c4 14 14 22 24 22s20-8 24-22" fill="none" stroke="#0e0e12" stroke-width="6" />
+                      <rect x="74" y="130" width="52" height="24" rx="4" fill="#0e0e12" />
+                      <path d="M82 116c6-10 10-10 18 0s12 10 18 0" fill="none" stroke="#c6ff3d" stroke-width="4" stroke-linecap="round" />
+                    </svg>
+                  )}
+                  {m.art === "tape" && (
+                    <svg viewBox="0 0 200 200" aria-hidden="true">
+                      <rect x="26" y="58" width="148" height="92" rx="8" fill="#0e0e12" />
+                      <rect x="40" y="70" width="120" height="40" rx="4" fill="#ff3d9a" />
+                      <circle cx="74" cy="90" r="12" fill="#0e0e12" />
+                      <circle cx="126" cy="90" r="12" fill="#0e0e12" />
+                      <path d="M62 150l10-22h56l10 22" fill="#2a2a33" />
+                    </svg>
+                  )}
+                </div>
+                <div class="merch-info">
+                  <h3>{m.name}</h3>
+                  <p>{m.detail}</p>
+                  <span class="price">${m.price}</span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section press-teaser" aria-labelledby="press-title">
+    <div class="wrap press-grid">
+      <div>
+        <span class="kicker">Press and booking</span>
+        <h2 id="press-title">About the band</h2>
+      </div>
+      <div>
+        <p class="bio">{press.shortBio}</p>
+        <blockquote>
+          <p>"{press.quotes[0].text}"</p>
+          <cite>{press.quotes[0].source}</cite>
+        </blockquote>
+        <div class="actions">
+          <a class="btn btn-ghost" href="/press/">Open the press kit</a>
+          <a class="btn btn-ghost" href={`mailto:${site.bookingEmail}`}>Booking inquiries</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="join" id="join" aria-labelledby="join-title">
+    <div class="wrap join-grid">
+      <div>
+        <h2 id="join-title">{signup.title}</h2>
+        <p>{signup.text}</p>
+      </div>
+      <SignupForm />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(50% 60% at 85% 30%, rgb(107 44 255 / 0.35), transparent 70%),
+      radial-gradient(40% 50% at 10% 90%, rgb(255 61 154 / 0.18), transparent 70%),
+      var(--bg);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+    padding-block: clamp(48px, 8vw, 104px);
+  }
+  h1 {
+    display: grid;
+    gap: 0.1em;
+  }
+  .band {
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    letter-spacing: 0.24em;
+    color: var(--muted);
+  }
+  .release {
+    background: linear-gradient(100deg, #f2f2ee 30%, var(--lime) 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-text {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    max-width: 46ch;
+  }
+  .released {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .hero-cover {
+    position: relative;
+    max-width: 460px;
+    width: 100%;
+    justify-self: center;
+    padding-right: 14%;
+  }
+  .sleeve {
+    position: relative;
+    z-index: 1;
+    box-shadow:
+      0 40px 80px -30px rgb(0 0 0 / 0.9),
+      0 0 0 1px rgb(255 255 255 / 0.06);
+    transform: rotate(-3deg);
+  }
+  .vinyl {
+    position: absolute;
+    top: 4%;
+    right: 0;
+    width: 88%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--magenta) 0 14%, #0b0b0d 14.5% 16%, transparent 16.5%),
+      repeating-radial-gradient(circle, #16161b 0 2px, #0b0b0d 2px 4px);
+    animation: spin 12s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .ticker {
+    overflow: hidden;
+    background: var(--lime);
+    color: #0b0b0d;
+    border-block: 2px solid #0b0b0d;
+    transform: rotate(-1deg);
+    margin-block: 8px;
+  }
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    animation: scroll 40s linear infinite;
+  }
+  .ticker-group {
+    display: flex;
+  }
+  .ticker span span {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    padding: 0.7rem 0 0.7rem 1.5rem;
+    white-space: nowrap;
+  }
+  .ticker i {
+    font-style: normal;
+    color: var(--magenta);
+    margin-left: 1.5rem;
+  }
+  @keyframes scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .players {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .tour-section {
+    background: var(--surface);
+    border-block: 1px solid var(--line);
+  }
+
+  .merch {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .merch-card {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition:
+      transform 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .merch-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--lime);
+  }
+  .merch-art {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    padding: 12%;
+  }
+  .art-vinyl {
+    background: var(--lime);
+  }
+  .art-tee {
+    background: #e9e6dc;
+  }
+  .art-hoodie {
+    background: var(--violet);
+  }
+  .art-tape {
+    background: #ffb13d;
+  }
+  .merch-art svg {
+    width: 100%;
+    height: 100%;
+  }
+  .merch-info {
+    padding: 1rem 1.1rem 1.2rem;
+  }
+  .merch-info h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+  }
+  .merch-info p {
+    margin: 0 0 0.5rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .price {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--lime);
+  }
+
+  .press-teaser {
+    border-top: 1px solid var(--line);
+  }
+  .press-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(24px, 5vw, 64px);
+  }
+  .bio {
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+  }
+  blockquote {
+    margin: 2rem 0;
+    padding-left: 1.25rem;
+    border-left: 4px solid var(--magenta);
+  }
+  blockquote p {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  cite {
+    color: var(--muted);
+    font-style: normal;
+  }
+
+  .join {
+    background: var(--lime);
+    color: #0b0b0d;
+    padding-block: clamp(56px, 8vw, 96px);
+    scroll-margin-top: 64px;
+  }
+  .join-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(24px, 5vw, 64px);
+    align-items: center;
+  }
+  .join h2 {
+    margin-bottom: 0.4em;
+  }
+  .join p {
+    margin: 0;
+    max-width: 44ch;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid,
+    .press-grid,
+    .join-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-cover {
+      max-width: 380px;
+      justify-self: start;
+    }
+  }
+</style>

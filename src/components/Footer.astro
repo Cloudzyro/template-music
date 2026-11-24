@@ -1,0 +1,73 @@
+---
+import { site } from "../data/site";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="big" aria-hidden="true">{site.name}</p>
+    <div class="row">
+      <ul class="social">
+        {site.social.map((s) => <li><a href={s.url}>{s.label}</a></li>)}
+      </ul>
+      <p class="contact">
+        Booking: <a href={`mailto:${site.bookingEmail}`}>{site.bookingEmail}</a><br />
+        Press: <a href={`mailto:${site.pressEmail}`}>{site.pressEmail}</a>
+      </p>
+    </div>
+    <p class="legal">&copy; {year} {site.name}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    padding-block: 64px 32px;
+    overflow: hidden;
+  }
+  .big {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: clamp(1.75rem, 8.4vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin: 0 0 2.5rem;
+    color: transparent;
+    -webkit-text-stroke: 1.5px #3a3a45;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+  }
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .social a {
+    color: var(--text);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .social a:hover {
+    color: var(--lime);
+  }
+  .contact {
+    color: var(--muted);
+    margin: 0;
+  }
+  .legal {
+    margin: 2.5rem 0 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+</style>

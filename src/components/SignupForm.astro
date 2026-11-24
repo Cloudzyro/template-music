@@ -1,0 +1,147 @@
+---
+// Sends to PUBLIC_FORM_ENDPOINT (Formspree, Basin, a Supabase function or similar).
+// With no endpoint set, the form opens the visitor's email app instead.
+import { site } from "../data/site";
+
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? "";
+const subject = `Add me to the ${site.name} mailing list`;
+---
+
+<form
+  class="signup"
+  method="post"
+  action={endpoint || `mailto:${site.email}`}
+  data-endpoint={endpoint}
+  data-email={site.email}
+  data-subject={subject}
+>
+  <input type="hidden" name="_subject" value={subject} />
+  <div class="fields">
+    <label>
+      <span>Email</span>
+      <input name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+    </label>
+    <label>
+      <span>City <small>(for tour news)</small></span>
+      <input name="city" autocomplete="address-level2" placeholder="Your city" />
+    </label>
+    <button class="btn btn-primary" type="submit">Sign me up</button>
+  </div>
+  {
+    !endpoint && (
+      <p class="note" role="note">
+        Sign-ups aren't connected yet, so this opens your email app. You can also write to{" "}
+        <a href={`mailto:${site.email}?subject=${encodeURIComponent(subject)}`}>{site.email}</a>.
+      </p>
+    )
+  }
+  <p class="status" role="status" aria-live="polite"></p>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>("form.signup").forEach((form) => {
+    const status = form.querySelector<HTMLElement>(".status")!;
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const { endpoint, email, subject } = form.dataset;
+      const data = new FormData(form);
+
+      if (!endpoint) {
+        const lines = [...data.entries()]
+          .filter(([key]) => !key.startsWith("_"))
+          .map(([key, value]) => `${key}: ${value}`);
+        window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject ?? "")}&body=${encodeURIComponent(lines.join("\n"))}`;
+        status.textContent = "Your email app should open with your details filled in.";
+        return;
+      }
+
+      const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+      button.disabled = true;
+      status.textContent = "Signing you up...";
+      try {
+        const res = await fetch(endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        status.textContent = "You're on the list. See you at the front.";
+      } catch {
+        status.replaceChildren("Sorry, that didn't go through. Please email ");
+        const link = Object.assign(document.createElement("a"), { href: `mailto:${email}`, textContent: email });
+        status.append(link, ".");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>
+
+<style>
+  .signup {
+    display: grid;
+    gap: 1rem;
+  }
+  .fields {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr auto;
+    gap: 0.75rem;
+    align-items: end;
+  }
+  label {
+    display: grid;
+    gap: 0.4rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  small {
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: rgb(11 11 13 / 0.7);
+  }
+  input {
+    width: 100%;
+    min-height: 52px;
+    font: inherit;
+    font-size: 1rem;
+    color: #0b0b0d;
+    background: #fff;
+    border: 2px solid #0b0b0d;
+    border-radius: var(--radius);
+    padding: 0.7rem 0.9rem;
+  }
+  input::placeholder {
+    color: #6c6c76;
+  }
+  input:focus-visible {
+    outline: 3px solid #0b0b0d;
+    outline-offset: 2px;
+  }
+  button {
+    min-height: 52px;
+    background: #0b0b0d;
+    color: var(--lime);
+  }
+  button:focus-visible {
+    outline-color: #0b0b0d;
+  }
+  .note {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  .note a,
+  .status :global(a) {
+    color: #0b0b0d;
+    font-weight: 700;
+  }
+  .status {
+    margin: 0;
+    font-weight: 700;
+    min-height: 1.5em;
+  }
+  @media (max-width: 760px) {
+    .fields {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+// Generated cover art. Replace with your real artwork when you have it.
+interface Props {
+  art: "bloom" | "wire" | "tide";
+  label: string;
+  uid: string;
+  title?: string;
+}
+const { art, label, uid, title } = Astro.props;
+---
+
+<svg class="cover" viewBox="0 0 600 600" role="img" aria-label={label}>
+  <defs>
+    <radialGradient id={`${uid}-a`} cx="50%" cy="55%" r="60%">
+      <stop offset="0" stop-color="#c6ff3d"></stop>
+      <stop offset=".45" stop-color="#2bd4a4" stop-opacity=".7"></stop>
+      <stop offset="1" stop-color="#0b0b0d" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id={`${uid}-b`} x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff3d9a"></stop>
+      <stop offset="1" stop-color="#6b2cff"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="#0e0e12"></rect>
+  {
+    art === "bloom" && (
+      <g>
+        <circle cx="300" cy="320" r="300" fill={`url(#${uid}-a)`} />
+        {[0, 30, 60, 90, 120, 150].map((deg) => (
+          <ellipse cx="300" cy="320" rx="70" ry="210" fill="none" stroke="#0e0e12" stroke-width="10" opacity=".55" transform={`rotate(${deg} 300 320)`} />
+        ))}
+        <circle cx="300" cy="320" r="38" fill={`url(#${uid}-b)`} />
+        {Array.from({ length: 22 }, (_, i) => (
+          <rect x="40" y={40 + i * 6} width={520 - (i % 5) * 60} height="2" fill="#f2f2ee" opacity=".08" />
+        ))}
+      </g>
+    )
+  }
+  {
+    art === "wire" && (
+      <g>
+        <rect width="600" height="600" fill={`url(#${uid}-b)`} opacity=".9" />
+        {Array.from({ length: 18 }, (_, i) => (
+          <path
+            d={`M-20 ${120 + i * 22} C 160 ${40 + i * 30}, 380 ${260 + i * 8}, 620 ${90 + i * 26}`}
+            fill="none"
+            stroke={i % 4 === 0 ? "#c6ff3d" : "#0e0e12"}
+            stroke-width={i % 4 === 0 ? 4 : 2}
+            opacity={i % 4 === 0 ? 1 : 0.55}
+          />
+        ))}
+      </g>
+    )
+  }
+  {
+    art === "tide" && (
+      <g>
+        <rect width="600" height="600" fill="#101a3a" />
+        <circle cx="420" cy="190" r="90" fill="#ff3d9a" />
+        {Array.from({ length: 9 }, (_, i) => (
+          <path
+            d={`M0 ${300 + i * 36} Q 75 ${280 + i * 36} 150 ${300 + i * 36} T 300 ${300 + i * 36} T 450 ${300 + i * 36} T 600 ${300 + i * 36} V600 H0z`}
+            fill={i % 2 ? "#13265a" : "#0e0e12"}
+            opacity={0.55 + i * 0.05}
+          />
+        ))}
+      </g>
+    )
+  }
+  {
+    title && (
+      <text x="40" y="560" fill="#f2f2ee" font-family="Unbounded Variable, sans-serif" font-size="34" font-weight="800" letter-spacing="2">
+        {title.toUpperCase()}
+      </text>
+    )
+  }
+</svg>
+
+<style>
+  .cover {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

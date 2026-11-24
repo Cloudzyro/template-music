@@ -1,0 +1,184 @@
+---
+import { site } from "../data/site";
+
+const links = [
+  { href: "/#music", label: "Music" },
+  { href: "/#tour", label: "Tour" },
+  { href: "/#merch", label: "Merch" },
+  { href: "/press/", label: "Press" },
+];
+const path = Astro.url.pathname.replace(/\/?$/, "/");
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label={`${site.name}, home`}>
+      <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true">
+        <path d="M10 40c8-18 14-18 22 0s14 18 22 0" fill="none" stroke="#c6ff3d" stroke-width="6" stroke-linecap="round"></path>
+        <circle cx="32" cy="20" r="6" fill="#ff3d9a"></circle>
+      </svg>
+      <span>{site.name}</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="visually-hidden">Open menu</span>
+      <span class="bars" aria-hidden="true"></span>
+    </button>
+    <nav id="site-nav" class="nav" aria-label="Main">
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} aria-current={path === l.href ? "page" : undefined}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="btn btn-primary btn-small" href="/#join">Join the list</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+  const nav = document.getElementById("site-nav");
+  const setOpen = (open: boolean) => {
+    toggle?.setAttribute("aria-expanded", String(open));
+    toggle!.querySelector(".visually-hidden")!.textContent = open ? "Close menu" : "Open menu";
+    nav?.classList.toggle("open", open);
+  };
+  toggle?.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+  nav?.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && nav?.classList.contains("open")) {
+      setOpen(false);
+      toggle?.focus();
+    }
+  });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(11 11 13 / 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    gap: 1rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+  .nav ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav ul a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .nav ul a:hover,
+  .nav ul a[aria-current="page"] {
+    color: var(--lime);
+  }
+  .menu-toggle {
+    display: none;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .bars,
+  .bars::before,
+  .bars::after {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    margin: 0 auto;
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+  .bars::before,
+  .bars::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+  .bars::before {
+    top: -7px;
+  }
+  .bars::after {
+    top: 7px;
+  }
+  [aria-expanded="true"] .bars {
+    background: transparent;
+  }
+  [aria-expanded="true"] .bars::before {
+    transform: translateY(7px) rotate(45deg);
+  }
+  [aria-expanded="true"] .bars::after {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  @media (max-width: 760px) {
+    .menu-toggle {
+      display: block;
+    }
+    .nav {
+      display: none;
+      position: absolute;
+      inset: 64px 0 auto 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+      padding: 1rem var(--gutter) 1.5rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav.open {
+      display: flex;
+    }
+    .nav ul {
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav ul a {
+      display: block;
+      padding: 0.9rem 0;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+</style>

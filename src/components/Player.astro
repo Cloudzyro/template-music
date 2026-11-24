@@ -1,0 +1,104 @@
+---
+// Click-to-load player. Nothing from the streaming service loads until a
+// visitor presses the button, so there are no third-party requests by default.
+import Cover from "./Cover.astro";
+import type { Embed } from "../data/site";
+
+interface Props {
+  embed: Embed;
+  uid: string;
+}
+const { embed, uid } = Astro.props;
+---
+
+<article class="player" data-player>
+  <div class="art">
+    <Cover art={embed.art} uid={uid} label={`Cover art for ${embed.title}`} />
+    <span class="service">{embed.service}</span>
+  </div>
+  <div class="meta">
+    <h3>{embed.title}</h3>
+    <p class="sub">{embed.subtitle}</p>
+  </div>
+  <div class="slot" data-slot>
+    <button
+      class="btn btn-ghost load"
+      type="button"
+      data-src={embed.embedUrl}
+      data-height={embed.height}
+      data-title={`${embed.title} on ${embed.service}`}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"></path></svg>
+      Load the {embed.service} player
+    </button>
+    <p class="consent">Loads content and cookies from {embed.service} when you click.</p>
+  </div>
+</article>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-player] button.load").forEach((button) => {
+    button.addEventListener("click", () => {
+      const slot = button.closest<HTMLElement>("[data-slot]")!;
+      const iframe = document.createElement("iframe");
+      iframe.src = button.dataset.src!;
+      iframe.title = button.dataset.title!;
+      iframe.height = button.dataset.height!;
+      iframe.width = "100%";
+      iframe.loading = "lazy";
+      iframe.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+      slot.replaceChildren(iframe);
+      slot.classList.add("loaded");
+      iframe.focus();
+    });
+  });
+</script>
+
+<style>
+  .player {
+    display: grid;
+    gap: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .art {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .service {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgb(11 11 13 / 0.8);
+    color: var(--text);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+  }
+  .meta h3 {
+    margin: 0 0 0.2rem;
+  }
+  .sub {
+    margin: 0;
+    color: var(--muted);
+  }
+  .load {
+    width: 100%;
+  }
+  .consent {
+    margin: 0.6rem 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .slot :global(iframe) {
+    display: block;
+    border: 0;
+    border-radius: 12px;
+    background: var(--surface-2);
+  }
+</style>

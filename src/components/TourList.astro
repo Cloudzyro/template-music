@@ -1,0 +1,217 @@
+---
+import { shows, type Show } from "../data/site";
+
+// Split at build time. A small script below moves shows that have since passed,
+// so the list stays right between builds.
+const today = new Date().toISOString().slice(0, 10);
+const upcoming = shows.filter((s) => s.date >= today).sort((a, b) => a.date.localeCompare(b.date));
+const past = shows.filter((s) => s.date < today).sort((a, b) => b.date.localeCompare(a.date));
+
+const parts = (s: Show) => {
+  const d = new Date(`${s.date}T12:00:00Z`);
+  return {
+    month: d.toLocaleString("en-US", { month: "short", timeZone: "UTC" }),
+    day: d.toLocaleString("en-US", { day: "2-digit", timeZone: "UTC" }),
+    year: d.toLocaleString("en-US", { year: "numeric", timeZone: "UTC" }),
+    weekday: d.toLocaleString("en-US", { weekday: "short", timeZone: "UTC" }),
+    full: d.toLocaleString("en-US", { dateStyle: "long", timeZone: "UTC" }),
+  };
+};
+---
+
+<div class="tour">
+  <ol class="shows" data-upcoming>
+    {
+      upcoming.map((s) => {
+        const p = parts(s);
+        return (
+          <li class="show" data-date={s.date}>
+            <time datetime={s.date} class="date">
+              <span class="m">{p.month}</span>
+              <span class="d">{p.day}</span>
+              <span class="visually-hidden">{p.year}</span>
+            </time>
+            <div class="where">
+              <span class="city">{s.city}</span>
+              <span class="venue">
+                {s.venue}
+                {s.note && <em> {s.note}</em>}
+              </span>
+            </div>
+            <div class="cta">
+              {s.soldOut ? (
+                <span class="sold">Sold out</span>
+              ) : s.ticketsUrl ? (
+                <a class="btn btn-primary btn-small" href={s.ticketsUrl}>
+                  Tickets<span class="visually-hidden"> for {s.city}, {p.full}</span>
+                </a>
+              ) : (
+                <span class="soon">On sale soon</span>
+              )}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+  <p class="empty" data-empty hidden={upcoming.length > 0}>No shows announced right now. Join the mailing list to hear first.</p>
+
+  <details class="past">
+    <summary>Past shows</summary>
+    <ol class="past-list" data-past>
+      {
+        past.map((s) => (
+          <li data-date={s.date}>
+            <time datetime={s.date}>{parts(s).full}</time>
+            <span>
+              {s.city}, {s.venue}
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+  </details>
+</div>
+
+<script>
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const upcoming = document.querySelector<HTMLElement>("[data-upcoming]");
+  const past = document.querySelector<HTMLElement>("[data-past]");
+  upcoming?.querySelectorAll<HTMLElement>("li[data-date]").forEach((row) => {
+    if (row.dataset.date! >= today) return;
+    const item = document.createElement("li");
+    item.dataset.date = row.dataset.date;
+    const time = document.createElement("time");
+    time.dateTime = row.dataset.date!;
+    time.textContent = new Date(`${row.dataset.date}T12:00:00Z`).toLocaleString("en-US", { dateStyle: "long", timeZone: "UTC" });
+    const where = document.createElement("span");
+    where.textContent = `${row.querySelector(".city")?.textContent}, ${row.querySelector(".venue")?.firstChild?.textContent?.trim()}`;
+    item.append(time, where);
+    past?.prepend(item);
+    row.remove();
+  });
+  if (upcoming && !upcoming.querySelector("li")) {
+    document.querySelector<HTMLElement>("[data-empty]")!.hidden = false;
+  }
+</script>
+
+<style>
+  .shows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .show {
+    display: grid;
+    grid-template-columns: 88px 1fr auto;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.15s ease;
+  }
+  .show:hover {
+    background: linear-gradient(90deg, rgb(198 255 61 / 0.06), transparent);
+  }
+  .date {
+    display: grid;
+    line-height: 1;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+  }
+  .m {
+    font-size: 0.8rem;
+    color: var(--magenta);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+  .d {
+    font-size: 2.2rem;
+    font-weight: 800;
+  }
+  .where {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .city {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1rem, 2.4vw, 1.35rem);
+    text-transform: uppercase;
+  }
+  .venue {
+    color: var(--muted);
+  }
+  .venue em {
+    font-style: normal;
+    color: var(--lime);
+    font-weight: 600;
+  }
+  .sold,
+  .soon {
+    display: inline-block;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 0.55rem 0.9rem;
+    border: 2px dashed var(--magenta);
+    color: var(--magenta);
+    border-radius: var(--radius);
+  }
+  .soon {
+    border-color: var(--line);
+    color: var(--muted);
+  }
+  .empty {
+    color: var(--muted);
+    padding: 1.5rem 0;
+  }
+  .past {
+    margin-top: 2rem;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: var(--muted);
+    padding: 0.5rem 0;
+    width: fit-content;
+  }
+  summary:hover {
+    color: var(--text);
+  }
+  .past-list {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    color: var(--muted);
+  }
+  .past-list :global(li) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+  }
+  .past-list :global(time) {
+    min-width: 11rem;
+    color: var(--text);
+  }
+  @media (max-width: 600px) {
+    .show {
+      grid-template-columns: 64px 1fr;
+    }
+    .cta {
+      grid-column: 2;
+    }
+    .d {
+      font-size: 1.8rem;
+    }
+  }
+</style>
